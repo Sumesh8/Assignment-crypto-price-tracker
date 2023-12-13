@@ -1,0 +1,257 @@
+openapi: 3.0.0
+info:
+  title: Cryptocurrencies Price Tracker API
+  description: This is a sample Cryptocurrencies Price Tracker API based on the OpenAPI 3.0 specification.  
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/api  
+  
+tags:
+  - name: Users
+    description: API operations related to users
+  - name: Favorites Cryptocurrencies
+    description:  API operations related to user's favorite cryptocurrencies
+
+paths:
+  /users:
+    post:
+      summary: Create a new user
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Create'
+      responses:
+        '201':
+          description: Creted new user
+        '500':
+          description: Database connection error
+
+    get:
+      summary: Get all users
+      tags:
+        - Users
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Records not found
+        '400':
+          description: Invalid request
+          
+          
+    patch:
+      summary: Update user information
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Update'
+      responses:
+        '200':
+          description: Updated successfully
+        '404':
+          description: Failed to update user
+        '400':
+          description: Invalid input or Server error
+
+  /users/{id}:
+    get:
+      summary: Get user by ID
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Record not found
+        '400':
+          description: Invalid request
+          
+          
+    delete:
+      summary: Delete user by ID
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User deleted successfully
+        '404':
+          description: User Not Found
+        '400':
+          description: Invalid request
+          
+  /users/login:
+    post:
+      summary: User login
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        '200':
+          description: Login Successfully
+        '404':
+          description: Invalid Email or password or Invalid input format
+        '400':
+          description: Invalid request
+          
+  /user_favorite:
+    post:
+      summary: Create a favourite Cryptocurrency
+      tags:
+        - Favorites Cryptocurrencies
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FavoriteCryptocurrency'
+      responses:
+        '200':
+          description: OK
+        '500':
+          description: Dublicate entry or Database connection error
+          
+    patch:
+      summary: Update favorite cryptocurrencies information
+      tags:
+        - Favorites Cryptocurrencies
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Update'
+      responses:
+        '200':
+          description: Updated successfully
+        '404':
+          description: Failed to update user
+        '400':
+          description: Invalid input or Server error
+          
+  /user_favorite/{userId}:
+    get:
+      summary: Get favorite cryptocurrencies by User Id
+      tags:
+        - Favorites Cryptocurrencies
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Record not found
+        '400':
+          description: Invalid request or Server error
+          
+    delete:
+      summary: Delete favorite cryptocurrencies by User Id
+      tags:
+        - Favorites Cryptocurrencies
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Favourite cryptocurrrencies deleted successfully
+        '404':
+          description: Record Not Found
+        '400':
+          description: Invalid request or Sever error
+          
+components:
+  schemas:
+    Create:
+      type: object
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+          
+    Update:
+      type: object
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        id:
+          type: integer
+          
+          
+    Login:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    FavoriteCryptocurrency:
+      type: object
+      properties:
+        userId:
+          type: integer
+        crypto_symbols:
+          type: string
+
+          
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

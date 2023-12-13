@@ -1,0 +1,7 @@
+{
+    "ignore": ["test/*", "docs/*"],
+    "execMap": {
+      "js": "node --trace-warnings"
+    },
+    "verbose": true
+  }
